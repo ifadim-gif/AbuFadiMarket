@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/600.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/tajawal/400.css";
+@import "@fontsource/tajawal/500.css";
+
+@theme {
+  --font-sans: "Cairo", "Tajawal", system-ui, sans-serif;
+
+  --color-space-950: #05060f;
+  --color-space-900: #0b0e1f;
+  --color-space-800: #12172e;
+  --color-space-700: #1c2340;
+
+  --color-glass-border: rgba(148, 163, 253, 0.16);
+  --color-glass-bg: rgba(18, 23, 46, 0.55);
+
+  --color-status-ok: #34d399;
+  --color-status-warn: #fbbf24;
+  --color-status-danger: #f87171;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  font-family: var(--font-sans);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.16), transparent 55%),
+    radial-gradient(circle at 85% 0%, rgba(56, 189, 248, 0.12), transparent 45%),
+    var(--color-space-950);
+  color: #e5e7eb;
+}
+
+#root {
+  min-height: 100svh;
+}
