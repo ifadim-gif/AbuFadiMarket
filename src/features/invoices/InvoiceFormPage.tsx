@@ -6,6 +6,7 @@ import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { useAuth } from '../auth/useAuth'
+import { useSuppliers } from '../suppliers/hooks'
 import { useInvoice, useUpdateInvoice } from './hooks'
 import { isDuplicatePaperNoError } from './queries'
 import { useCaptureInvoice } from '../capture/hooks'
@@ -23,7 +24,13 @@ export function InvoiceFormPage() {
   const captureInvoice = useCaptureInvoice()
   const updateInvoice = useUpdateInvoice()
 
-  const supplierId = isEdit ? existingInvoice?.supplier_id : supplierIdFromQuery
+  const [pickedSupplierId, setPickedSupplierId] = useState('')
+  // مصدر المورد: عند التعديل من الفاتورة، وإلا من الرابط، وإلا من قائمة الاختيار.
+  const needsPicker = !isEdit && !supplierIdFromQuery
+  const { data: suppliers } = useSuppliers()
+  const supplierId = isEdit
+    ? existingInvoice?.supplier_id
+    : supplierIdFromQuery ?? (pickedSupplierId || undefined)
 
   const [paperNo, setPaperNo] = useState('')
   const [amount, setAmount] = useState('')
@@ -39,13 +46,16 @@ export function InvoiceFormPage() {
   }
 
   if (isEdit && loadingExisting) return <LoadingSpinner label="جارٍ تحميل الفاتورة..." />
-  if (!supplierId) return <ErrorBanner message="لا يمكن تحديد المورد لهذه الفاتورة" />
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
+    if (!supplierId) {
+      setError('اختر موردًا للفاتورة')
+      return
+    }
     const input = {
-      supplier_id: supplierId!,
+      supplier_id: supplierId,
       paper_no: paperNo,
       amount: Number(amount),
       due_date: dueDate || null,
@@ -83,6 +93,24 @@ export function InvoiceFormPage() {
         {isEdit ? 'تعديل فاتورة' : 'فاتورة جديدة'}
       </h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {needsPicker && (
+          <label className="flex flex-col gap-1 text-sm text-gray-300">
+            المورد
+            <select
+              required
+              value={pickedSupplierId}
+              onChange={(e) => setPickedSupplierId(e.target.value)}
+              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
+            >
+              <option value="">اختر موردًا…</option>
+              {suppliers?.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           رقم الفاتورة الورقية
           <input
