@@ -19,6 +19,7 @@ import { OutboxPage } from '../features/capture/OutboxPage'
 import { SalesReportPage } from '../features/salesreport/SalesReportPage'
 import { BackOfficePage } from '../features/backoffice/BackOfficePage'
 import { ExpensesPage } from '../features/expenses/ExpensesPage'
+import { OpeningBalancesPage } from '../features/opening/OpeningBalancesPage'
 import { RequireRole } from '../features/auth/RequireRole'
 
 export const router = createBrowserRouter(
@@ -117,6 +118,14 @@ export const router = createBrowserRouter(
         element: (
           <RequireRole allow={['admin', 'super_admin', 'cashier']}>
             <ExpensesPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: 'opening-balances',
+        element: (
+          <RequireRole allow={['super_admin']}>
+            <OpeningBalancesPage />
           </RequireRole>
         ),
       },

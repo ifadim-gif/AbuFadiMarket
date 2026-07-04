@@ -8,14 +8,6 @@ const chartTooltipStyle = { background: '#12172e', border: '1px solid #94a3fd29'
 const chartLabelStyle = { color: '#e5e7eb' }
 const axisColor = '#9ca3af'
 
-const accountLabels: Record<string, string> = {
-  cash_drawer: 'درج النقد',
-  accumulated_cash: 'النقد المتراكم',
-  bank: 'البنك',
-  checks_on_hand: 'الشيكات بحوزتنا',
-  suppliers_payable: 'ذمم الموردين',
-}
-
 export function DashboardPage() {
   const { data: stats, isLoading: loadingStats } = useDashboardStats()
   const { data: accounts, isLoading: loadingAccounts } = useAccounts()
@@ -62,7 +54,7 @@ export function DashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {accounts?.map((a) => (
               <div key={a.id} className="rounded-lg border border-glass-border p-3">
-                <p className="text-xs text-gray-400">{accountLabels[a.code] ?? a.code}</p>
+                <p className="text-xs text-gray-400">{a.name_ar ?? a.code}</p>
                 <p className="mt-1 font-mono text-white">{a.balance.toFixed(2)}</p>
               </div>
             ))}

@@ -633,7 +633,15 @@ export type Database = {
         Args: { p_actor: string; p_check_id: string }
         Returns: string
       }
+      bounce_check_impl: {
+        Args: { p_actor: string; p_check_id: string }
+        Returns: string
+      }
       clear_check: {
+        Args: { p_actor: string; p_check_id: string }
+        Returns: string
+      }
+      clear_check_impl: {
         Args: { p_actor: string; p_check_id: string }
         Returns: string
       }
@@ -646,7 +654,20 @@ export type Database = {
         }
         Returns: string
       }
+      close_daily_orbit_impl: {
+        Args: {
+          p_actor: string
+          p_counted: number
+          p_new_float?: number
+          p_work_date?: string
+        }
+        Returns: string
+      }
       collect_card_clearing: {
+        Args: { p_actor: string; p_amount: number }
+        Returns: string
+      }
+      collect_card_clearing_impl: {
         Args: { p_actor: string; p_amount: number }
         Returns: string
       }
@@ -661,12 +682,37 @@ export type Database = {
         }
         Returns: string
       }
+      create_check_impl: {
+        Args: {
+          p_actor: string
+          p_amount: number
+          p_customer_ref?: string
+          p_drawer_name?: string
+          p_due_date?: string
+          p_purpose: string
+        }
+        Returns: string
+      }
       deposit_check: {
+        Args: { p_actor: string; p_check_id: string }
+        Returns: string
+      }
+      deposit_check_impl: {
         Args: { p_actor: string; p_check_id: string }
         Returns: string
       }
       is_admin: { Args: never; Returns: boolean }
       pay_supplier: {
+        Args: {
+          p_actor: string
+          p_cash: number
+          p_check_ids: string[]
+          p_drawer: number
+          p_supplier: string
+        }
+        Returns: string
+      }
+      pay_supplier_impl: {
         Args: {
           p_actor: string
           p_cash: number
@@ -701,7 +747,31 @@ export type Database = {
         }
         Returns: string
       }
+      record_daily_sales_impl: {
+        Args: {
+          p_actor: string
+          p_card_sales: number
+          p_cash_sales: number
+          p_check_sales: number
+          p_credit_delivery: number
+          p_credit_invoice: number
+          p_recv_card: number
+          p_recv_cash: number
+          p_recv_check: number
+          p_work_date: string
+        }
+        Returns: string
+      }
       record_expense: {
+        Args: {
+          p_actor: string
+          p_amount: number
+          p_note?: string
+          p_source: string
+        }
+        Returns: string
+      }
+      record_expense_impl: {
         Args: {
           p_actor: string
           p_amount: number
@@ -714,11 +784,27 @@ export type Database = {
         Args: { p_actor: string; p_transaction_id: string }
         Returns: string
       }
+      reverse_transaction_impl: {
+        Args: { p_actor: string; p_transaction_id: string }
+        Returns: string
+      }
+      set_opening_balance: {
+        Args: { p_amount: number; p_code: string }
+        Returns: string
+      }
       settle_receivable_transfer: {
         Args: { p_actor: string; p_amount: number }
         Returns: string
       }
+      settle_receivable_transfer_impl: {
+        Args: { p_actor: string; p_amount: number }
+        Returns: string
+      }
       skim_drawer: {
+        Args: { p_actor: string; p_amount: number }
+        Returns: string
+      }
+      skim_drawer_impl: {
         Args: { p_actor: string; p_amount: number }
         Returns: string
       }
@@ -734,6 +820,7 @@ export type Database = {
         | "card_clearing"
         | "sales_revenue"
         | "operating_expense"
+        | "opening_equity"
       check_status:
         | "available"
         | "endorsed"
@@ -748,6 +835,7 @@ export type Database = {
         | "reversal"
         | "sale"
         | "receivable_settlement"
+        | "opening_balance"
       user_role: "super_admin" | "admin" | "monitor" | "cashier"
     }
     CompositeTypes: {
@@ -889,6 +977,7 @@ export const Constants = {
         "card_clearing",
         "sales_revenue",
         "operating_expense",
+        "opening_equity",
       ],
       check_status: ["available", "endorsed", "cashed", "bounced", "deposited"],
       txn_type: [
@@ -899,6 +988,7 @@ export const Constants = {
         "reversal",
         "sale",
         "receivable_settlement",
+        "opening_balance",
       ],
       user_role: ["super_admin", "admin", "monitor", "cashier"],
     },

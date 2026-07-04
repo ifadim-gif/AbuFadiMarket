@@ -23,6 +23,7 @@ const navItems: { to: string; label: string; end?: boolean; allow?: UserRole[] }
   { to: '/nebula', label: 'سديم التدفق 🌫️' },
   { to: '/obligations', label: 'الالتزامات', allow: ['admin', 'super_admin'] },
   { to: '/back-office', label: 'الباك أوفيس', allow: ['admin', 'super_admin'] },
+  { to: '/opening-balances', label: 'الأرصدة الافتتاحية', allow: ['super_admin'] },
 ]
 
 const roleLabels: Record<string, string> = {
@@ -41,8 +42,8 @@ export function AppShell() {
     <div className="min-h-svh">
       <CometsBackground />
       <header className="border-b border-glass-border bg-glass-bg backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-          <nav className="flex flex-wrap items-center gap-1">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 md:flex-row md:items-center md:justify-between md:gap-4">
+          <nav className="flex items-center gap-1 overflow-x-auto md:flex-wrap">
             {navItems
               .filter((item) => !item.allow || (profile && item.allow.includes(profile.role)))
               .map((item) => (
@@ -52,7 +53,7 @@ export function AppShell() {
                 end={item.end}
                 className={({ isActive }) =>
                   clsx(
-                    'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                    'shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-indigo-500/20 text-indigo-300'
                       : 'text-gray-300 hover:bg-white/5',
@@ -63,7 +64,7 @@ export function AppShell() {
               </NavLink>
             ))}
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <ChecksDueIndicator />
             <OutboxIndicator />
             <PlanetBadges />
