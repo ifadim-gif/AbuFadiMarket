@@ -17,6 +17,8 @@ const typeLabels: Record<string, string> = {
   reversal: 'تراجع/تصحيح',
   sale: 'بيع',
   receivable_settlement: 'تحصيل ذمّة',
+  purchase: 'شراء (فاتورة)',
+  opening_balance: 'رصيد افتتاحي',
 }
 
 export function LedgerPage() {

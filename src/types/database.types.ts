@@ -821,6 +821,7 @@ export type Database = {
         | "sales_revenue"
         | "operating_expense"
         | "opening_equity"
+        | "purchases"
       check_status:
         | "available"
         | "endorsed"
@@ -836,6 +837,7 @@ export type Database = {
         | "sale"
         | "receivable_settlement"
         | "opening_balance"
+        | "purchase"
       user_role: "super_admin" | "admin" | "monitor" | "cashier"
     }
     CompositeTypes: {
@@ -978,6 +980,7 @@ export const Constants = {
         "sales_revenue",
         "operating_expense",
         "opening_equity",
+        "purchases",
       ],
       check_status: ["available", "endorsed", "cashed", "bounced", "deposited"],
       txn_type: [
@@ -989,6 +992,7 @@ export const Constants = {
         "sale",
         "receivable_settlement",
         "opening_balance",
+        "purchase",
       ],
       user_role: ["super_admin", "admin", "monitor", "cashier"],
     },
