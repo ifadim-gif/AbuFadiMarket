@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
+import { BackLink } from '../../components/ui/BackLink'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { useAuth } from '../auth/useAuth'
@@ -32,26 +33,29 @@ export function CheckDetailPage() {
   }
 
   return (
-    <GlassCard className="mx-auto max-w-md">
-      <div className="flex items-start justify-between gap-3">
-        <h1 className="text-lg font-bold text-white">{check.amount.toFixed(2)}</h1>
-        <Badge variant={statusBadgeVariant[check.status]}>{statusLabels[check.status]}</Badge>
-      </div>
-      {check.drawer_name && (
-        <p className="mt-2 text-sm text-gray-300">صاحب الشيك: {check.drawer_name}</p>
-      )}
-      {check.due_date && (
-        <p className="mt-1 text-sm text-gray-400">تاريخ الاستحقاق: {check.due_date}</p>
-      )}
-
-      {canBounce && check.status === 'endorsed' && (
-        <div className="mt-4 border-t border-glass-border pt-4">
-          {bounceError && <ErrorBanner message={bounceError} />}
-          <Button variant="danger" onClick={handleBounce} disabled={bounceCheck.isPending}>
-            {bounceCheck.isPending ? 'جارٍ التنفيذ...' : 'تسجيل كشيك راجع'}
-          </Button>
+    <div className="mx-auto flex max-w-md flex-col gap-4">
+      <BackLink to="/checks" label="الشيكات" />
+      <GlassCard>
+        <div className="flex items-start justify-between gap-3">
+          <h1 className="text-lg font-bold text-white">{check.amount.toFixed(2)}</h1>
+          <Badge variant={statusBadgeVariant[check.status]}>{statusLabels[check.status]}</Badge>
         </div>
-      )}
-    </GlassCard>
+        {check.drawer_name && (
+          <p className="mt-2 text-sm text-gray-300">صاحب الشيك: {check.drawer_name}</p>
+        )}
+        {check.due_date && (
+          <p className="mt-1 text-sm text-gray-400">تاريخ الاستحقاق: {check.due_date}</p>
+        )}
+
+        {canBounce && check.status === 'endorsed' && (
+          <div className="mt-4 border-t border-glass-border pt-4">
+            {bounceError && <ErrorBanner message={bounceError} />}
+            <Button variant="danger" onClick={handleBounce} disabled={bounceCheck.isPending}>
+              {bounceCheck.isPending ? 'جارٍ التنفيذ...' : 'تسجيل كشيك راجع'}
+            </Button>
+          </div>
+        )}
+      </GlassCard>
+    </div>
   )
 }

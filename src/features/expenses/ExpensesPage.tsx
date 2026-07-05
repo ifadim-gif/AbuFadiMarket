@@ -4,6 +4,7 @@ import Swal from 'sweetalert2'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { Input, Select } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { listAccounts } from '../dashboard/queries'
 import { dashboardKeys } from '../dashboard/hooks'
@@ -60,34 +61,31 @@ export function ExpensesPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             المبلغ
-            <input
+            <Input
               type="number"
               step="0.01"
               min="0.01"
               required
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             المصدر
-            <select
+            <Select
               value={source}
               onChange={(e) => setSource(e.target.value as ExpenseSource)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             >
               <option value="cash_drawer">درج النقد</option>
               <option value="accumulated_cash">النقد المتراكم</option>
-            </select>
+            </Select>
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             ملاحظة
-            <input
+            <Input
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="سبب المصروف"
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           {error && <ErrorBanner message={error} />}

@@ -4,6 +4,7 @@ import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
+import { Input } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { useSupplier } from '../suppliers/hooks'
 import { useChecks } from '../checks/hooks'
@@ -75,25 +76,23 @@ export function PaySupplierPage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           نقد من النقد المتراكم
-          <input
+          <Input
             type="number"
             step="0.01"
             min="0"
             value={cash}
             onChange={(e) => setCash(e.target.value)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           />
         </label>
 
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           نقد من صندوق المبيعات
-          <input
+          <Input
             type="number"
             step="0.01"
             min="0"
             value={drawer}
             onChange={(e) => setDrawer(e.target.value)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           />
           <span className="text-xs text-gray-500">يُسجَّل تلقائيًا كتفريغ للصندوق ثم سداد.</span>
         </label>
@@ -107,7 +106,7 @@ export function PaySupplierPage() {
                 className="flex items-center justify-between gap-3 rounded-lg border border-glass-border px-3 py-2 text-sm"
               >
                 <span className="flex items-center gap-2">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={selectedCheckIds.includes(c.id)}
                     onChange={() => toggleCheck(c.id)}

@@ -19,6 +19,15 @@
   --color-status-ok: #34d399;
   --color-status-warn: #fbbf24;
   --color-status-danger: #f87171;
+
+  --color-brand-red: #e40024;
+  --color-brand-red-light: #ff3355;
+  --color-brand-navy: #184890;
+  --color-brand-green: #24b430;
+  --color-brand-orange: #f09c00;
+
+  --color-field-bg: #232a4d;
+  --color-field-border: rgba(190, 200, 255, 0.32);
 }
 
 html {

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { Input, Select } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { useCreateCheck } from './hooks'
 import type { CheckPurpose } from './queries'
@@ -38,50 +39,45 @@ export function CheckFormPage() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           غرض الشيك
-          <select
+          <Select
             value={purpose}
             onChange={(e) => setPurpose(e.target.value as CheckPurpose)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           >
             <option value="sale">بيع جديد</option>
             <option value="receivable_settlement">تحصيل ذمّة عميل</option>
-          </select>
+          </Select>
         </label>
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           المبلغ
-          <input
+          <Input
             type="number"
             step="0.01"
             min="0.01"
             required
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           صاحب الشيك
-          <input
+          <Input
             value={drawerName}
             onChange={(e) => setDrawerName(e.target.value)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           رقم حساب الزبون (في نظام الكاش)
-          <input
+          <Input
             value={customerRef}
             onChange={(e) => setCustomerRef(e.target.value)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           تاريخ الاستحقاق
-          <input
+          <Input
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
-            className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
           />
         </label>
         {createCheck.error && <ErrorBanner message="تعذّر حفظ الشيك" />}

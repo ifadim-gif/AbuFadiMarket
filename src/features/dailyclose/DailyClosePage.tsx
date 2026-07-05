@@ -4,6 +4,7 @@ import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
+import { Input } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { useDailySalesReports } from '../salesreport/hooks'
 import { useCloseDailyOrbit, useDailyCloses, useDrawerAccount } from './hooks'
@@ -86,12 +87,11 @@ export function DailyClosePage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             تاريخ يوم العمل
-            <input
+            <Input
               type="date"
               required
               value={workDate}
               onChange={(e) => setWorkDate(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <p className="text-sm text-gray-400">
@@ -99,26 +99,24 @@ export function DailyClosePage() {
           </p>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             المبلغ المعدود فعليًا
-            <input
+            <Input
               type="number"
               step="0.01"
               min="0"
               required
               value={counted}
               onChange={(e) => setCounted(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             الافتتاحية الجديدة (يبقى في الدرج)
-            <input
+            <Input
               type="number"
               step="0.01"
               min="0"
               placeholder={expected.toFixed(2)}
               value={newFloat}
               onChange={(e) => setNewFloat(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
             <span className="text-xs text-gray-500">فارغ = إبقاء الدرج على المتوقّع.</span>
           </label>

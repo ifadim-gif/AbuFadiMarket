@@ -5,6 +5,7 @@ import { LoginPage } from '../features/auth/LoginPage'
 import { DashboardPage } from '../features/dashboard/DashboardPage'
 import { SuppliersListPage } from '../features/suppliers/SuppliersListPage'
 import { SupplierDetailPage } from '../features/suppliers/SupplierDetailPage'
+import { TodayMerchantsPage } from '../features/suppliers/TodayMerchantsPage'
 import { InvoiceFormPage } from '../features/invoices/InvoiceFormPage'
 import { ChecksListPage } from '../features/checks/ChecksListPage'
 import { CheckFormPage } from '../features/checks/CheckFormPage'
@@ -35,6 +36,7 @@ export const router = createBrowserRouter(
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'suppliers', element: <SuppliersListPage /> },
+      { path: 'suppliers/today', element: <TodayMerchantsPage /> },
       { path: 'suppliers/:id', element: <SupplierDetailPage /> },
       {
         path: 'invoices/new',

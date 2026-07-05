@@ -4,6 +4,7 @@ import Swal from 'sweetalert2'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { Input } from '../../components/ui/Input'
 import { listAccounts } from '../dashboard/queries'
 import { dashboardKeys } from '../dashboard/hooks'
 import { OPENING_ACCOUNTS } from './queries'
@@ -62,14 +63,14 @@ export function OpeningBalancesPage() {
                 </span>
               </div>
               <div className="flex items-end gap-2">
-                <input
+                <Input
                   type="number"
                   step="0.01"
                   min="0"
                   placeholder="الرصيد الحقيقي"
                   value={drafts[code] ?? ''}
                   onChange={(e) => setDrafts((d) => ({ ...d, [code]: e.target.value }))}
-                  className="flex-1 rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
+                  className="flex-1"
                 />
                 <Button type="submit" disabled={setBalance.isPending}>
                   ضبط

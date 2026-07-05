@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { Input } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { useChecks } from '../checks/hooks'
 import { useDailySalesReports, useRecordDailySales } from './hooks'
@@ -23,13 +24,12 @@ function NumField({
   return (
     <label className="flex flex-col gap-1 text-sm text-gray-300">
       {label}
-      <input
+      <Input
         type="number"
         step="0.01"
         min="0"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
       />
       {hint && <span className="text-xs text-gray-500">{hint}</span>}
     </label>
@@ -121,12 +121,11 @@ export function SalesReportPage() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             تاريخ يوم العمل
-            <input
+            <Input
               type="date"
               required
               value={workDate}
               onChange={(e) => setWorkDate(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
 

@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button'
 import { Badge } from '../../components/ui/Badge'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
+import { Input } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { useCreateObligation, useObligations, useToggleObligationSettled } from './hooks'
 
@@ -46,41 +47,37 @@ export function ObligationsPage() {
         <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             المبلغ
-            <input
+            <Input
               type="number"
               step="0.01"
               min="0.01"
               required
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             التاريخ المتوقّع
-            <input
+            <Input
               type="date"
               required
               value={expectedDate}
               onChange={(e) => setExpectedDate(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             الفئة
-            <input
+            <Input
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="ضريبة، تأمين، شيك صادر..."
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             ملاحظة
-            <input
+            <Input
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <Button type="submit" disabled={createObligation.isPending}>

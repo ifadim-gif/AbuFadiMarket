@@ -3,7 +3,9 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from './useAuth'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
+import { Input } from '../../components/ui/Input'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import logoFull from '../../assets/logo-full.png'
 
 export function LoginPage() {
   const { session, signIn } = useAuth()
@@ -26,28 +28,26 @@ export function LoginPage() {
   return (
     <div className="flex min-h-svh items-center justify-center p-6">
       <GlassCard className="w-full max-w-sm">
-        <h1 className="mb-6 text-center text-xl font-bold text-white">
-          فادي لوجيك برو
-        </h1>
+        <div className="mb-6 flex justify-center">
+          <img src={logoFull} alt="أبو فادي سوبر ماركت" className="h-16 w-auto rounded-lg bg-white/95 px-3 py-2" />
+        </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             البريد الإلكتروني
-            <input
+            <Input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             كلمة المرور
-            <input
+            <Input
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-lg border border-glass-border bg-space-900 px-3 py-2 text-white outline-none focus:border-indigo-400"
             />
           </label>
           {error && <ErrorBanner message={error} />}

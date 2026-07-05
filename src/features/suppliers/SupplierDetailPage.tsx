@@ -2,14 +2,19 @@ import { Link, useParams } from 'react-router-dom'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
+import { BackLink } from '../../components/ui/BackLink'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { useAuth } from '../auth/useAuth'
 import { useHasRole } from '../auth/useHasRole'
 import { useSupplier } from './hooks'
 import { useInvoicesBySupplier } from '../invoices/hooks'
+import { VisitScheduleEditor } from './VisitScheduleEditor'
+import { SupplierOrdersSection } from './SupplierOrdersSection'
 
 export function SupplierDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const { session } = useAuth()
   const { data: supplier, isLoading, error } = useSupplier(id!)
   const { data: invoices, isLoading: loadingInvoices } = useInvoicesBySupplier(id!)
   const canManage = useHasRole(['admin', 'super_admin'])
@@ -20,13 +25,18 @@ export function SupplierDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
+      <BackLink to="/suppliers" label="الموردون" />
       <GlassCard>
         <div className="flex items-start justify-between gap-3">
           <div>
             <h1 className="text-lg font-bold text-white">{supplier.name}</h1>
+            <p className="mt-1 text-xs text-gray-500">رقم المورد: {supplier.supplier_no}</p>
             {supplier.phone && <p className="mt-1 text-sm text-gray-400">{supplier.phone}</p>}
           </div>
-          {supplier.red_flag && <Badge variant="danger">علامة حمراء</Badge>}
+          <div className="flex flex-col items-end gap-1">
+            {supplier.red_flag && <Badge variant="danger">علامة حمراء</Badge>}
+            {supplier.orders_blocked && <Badge variant="warn">الطلبية محظورة</Badge>}
+          </div>
         </div>
         <p className="mt-4 text-sm text-gray-300">
           الرصيد الحالي: <span className="font-mono">{supplier.balance.toFixed(2)}</span>
@@ -41,6 +51,20 @@ export function SupplierDetailPage() {
           </Link>
         )}
       </GlassCard>
+
+      {canManage && (
+        <GlassCard>
+          <h2 className="mb-3 font-semibold text-white">أيام الزيارة</h2>
+          <VisitScheduleEditor supplier={supplier} />
+        </GlassCard>
+      )}
+
+      {canCapture && !supplier.orders_blocked && (
+        <GlassCard>
+          <h2 className="mb-3 font-semibold text-white">طلبية بدون فاتورة</h2>
+          <SupplierOrdersSection supplierId={supplier.id} actorId={session!.user.id} />
+        </GlassCard>
+      )}
 
       <GlassCard>
         <div className="flex items-center justify-between">
@@ -68,7 +92,7 @@ export function SupplierDetailPage() {
                   {inv.amount.toFixed(2)} / متبقٍ {(inv.remaining ?? 0).toFixed(2)}
                 </span>
                 {canManage && (
-                  <Link to={`/invoices/${inv.id}/edit`} className="text-indigo-300 hover:underline">
+                  <Link to={`/invoices/${inv.id}/edit`} className="text-brand-red-light hover:underline">
                     تعديل
                   </Link>
                 )}

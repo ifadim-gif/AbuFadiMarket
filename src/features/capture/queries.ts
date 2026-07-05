@@ -3,7 +3,7 @@ import { addToOutbox, getOutbox, updateOutboxItem, type OutboxInvoice } from '..
 import type { InvoiceInput } from '../invoices/queries'
 import { isDuplicatePaperNoError } from '../invoices/queries'
 
-export type CaptureResult = { mode: 'online' } | { mode: 'queued' }
+export type CaptureResult = { mode: 'online'; id: string } | { mode: 'queued'; id: string }
 
 /**
  * التقاط هجين: متّصل → إدراج مباشر (تغذية راجعة فورية لتكرار رقم الفاتورة)؛
@@ -20,14 +20,14 @@ export async function captureInvoice(
 
   if (navigator.onLine) {
     const { error } = await supabase.from('invoices').insert(row)
-    if (!error) return { mode: 'online' }
+    if (!error) return { mode: 'online', id }
     if (isDuplicatePaperNoError(error)) throw error // تكرار حقيقي — تغذية فورية
     // خطأ شبكة/عابر → أودِعه الصندوق ليُزامَن لاحقًا
   }
 
   const item: OutboxInvoice = { ...row, status: 'pending', createdAt: Date.now() }
   await addToOutbox(item)
-  return { mode: 'queued' }
+  return { mode: 'queued', id }
 }
 
 /** يُصرّف العناصر المعلّقة عند توفّر الشبكة. يُعيد true إن تغيّرت أي حالة. */

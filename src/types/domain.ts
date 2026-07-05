@@ -18,5 +18,6 @@ export type CashFlowDay = Database['public']['Functions']['project_cash_flow']['
 export type UserRole = Database['public']['Enums']['user_role']
 export type CheckStatus = Database['public']['Enums']['check_status']
 export type TxnType = Database['public']['Enums']['txn_type']
+export type VisitPattern = Database['public']['Enums']['visit_pattern_type']
 
 export type InvoiceWithSupplier = Invoice & { supplier: Pick<Supplier, 'id' | 'name'> }

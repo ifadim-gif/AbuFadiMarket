@@ -325,6 +325,48 @@ export type Database = {
           },
         ]
       }
+      invoice_images: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          image_url: string
+          invoice_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_url: string
+          invoice_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          invoice_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_images_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_images_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount: number
@@ -348,7 +390,7 @@ export type Database = {
           image_url?: string | null
           is_deleted?: boolean
           paid?: number
-          paper_no: string
+          paper_no?: string
           remaining?: number | null
           supplier_id: string
         }
@@ -493,33 +535,45 @@ export type Database = {
           created_at: string | null
           id: string
           name: string
+          orders_blocked: boolean
           phone: string | null
           red_flag: boolean
           red_flag_note: string | null
           risk_score: number
+          supplier_no: number
+          visit_day_of_month: number | null
           visit_days: number[] | null
+          visit_pattern: Database["public"]["Enums"]["visit_pattern_type"]
         }
         Insert: {
           balance?: number
           created_at?: string | null
           id?: string
           name: string
+          orders_blocked?: boolean
           phone?: string | null
           red_flag?: boolean
           red_flag_note?: string | null
           risk_score?: number
+          supplier_no?: number
+          visit_day_of_month?: number | null
           visit_days?: number[] | null
+          visit_pattern?: Database["public"]["Enums"]["visit_pattern_type"]
         }
         Update: {
           balance?: number
           created_at?: string | null
           id?: string
           name?: string
+          orders_blocked?: boolean
           phone?: string | null
           red_flag?: boolean
           red_flag_note?: string | null
           risk_score?: number
+          supplier_no?: number
+          visit_day_of_month?: number | null
           visit_days?: number[] | null
+          visit_pattern?: Database["public"]["Enums"]["visit_pattern_type"]
         }
         Relationships: []
       }
@@ -839,6 +893,7 @@ export type Database = {
         | "opening_balance"
         | "purchase"
       user_role: "super_admin" | "admin" | "monitor" | "cashier"
+      visit_pattern_type: "weekly" | "monthly" | "unspecified"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -995,6 +1050,7 @@ export const Constants = {
         "purchase",
       ],
       user_role: ["super_admin", "admin", "monitor", "cashier"],
+      visit_pattern_type: ["weekly", "monthly", "unspecified"],
     },
   },
 } as const
