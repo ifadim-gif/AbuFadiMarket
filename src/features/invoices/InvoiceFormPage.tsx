@@ -9,7 +9,7 @@ import { Input, Select } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
 import { useHasRole } from '../auth/useHasRole'
 import { useSuppliers } from '../suppliers/hooks'
-import { useInvoice, useUpdateInvoice } from './hooks'
+import { useCreateOrderInvoice, useInvoice, useUpdateInvoice } from './hooks'
 import { isDuplicatePaperNoError } from './queries'
 import { InvoicePhotoCapture } from './InvoicePhotoCapture'
 import { useCaptureInvoice } from '../capture/hooks'
@@ -25,6 +25,7 @@ export function InvoiceFormPage() {
 
   const { data: existingInvoice, isLoading: loadingExisting } = useInvoice(id ?? '')
   const captureInvoice = useCaptureInvoice()
+  const createOrderInvoice = useCreateOrderInvoice()
   const updateInvoice = useUpdateInvoice()
   const canManage = useHasRole(['admin', 'super_admin'])
   const [createdInvoiceId, setCreatedInvoiceId] = useState<string | null>(null)
@@ -37,9 +38,15 @@ export function InvoiceFormPage() {
     ? existingInvoice?.supplier_id
     : supplierIdFromQuery ?? (pickedSupplierId || undefined)
 
+  const currentSupplier = suppliers?.find((s) => s.id === supplierId)
+  const ordersBlocked = !!currentSupplier?.orders_blocked
+
   const [paperNo, setPaperNo] = useState('')
   const [amount, setAmount] = useState('')
   const [dueDate, setDueDate] = useState('')
+  // "بدون فاتورة": يُترك رقم الفاتورة فارغًا فتأخذ رقمًا تسلسليًا تلقائيًا (NO-#####)
+  // ويُرحَّل الدَّين عبر نفس محفّز الفاتورة. متّصلة إلزاميًا (توليد الرقم على القاعدة).
+  const [withoutInvoice, setWithoutInvoice] = useState(false)
   const [initialized, setInitialized] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -59,18 +66,29 @@ export function InvoiceFormPage() {
       setError('اختر موردًا للفاتورة')
       return
     }
-    const input = {
-      supplier_id: supplierId,
-      paper_no: paperNo,
-      amount: Number(amount),
-      due_date: dueDate || null,
-    }
     try {
       if (isEdit && id) {
-        await updateInvoice.mutateAsync({ id, input })
+        await updateInvoice.mutateAsync({
+          id,
+          input: { supplier_id: supplierId, paper_no: paperNo, amount: Number(amount), due_date: dueDate || null },
+        })
         navigate(`/suppliers/${supplierId}`)
+      } else if (withoutInvoice) {
+        if (!navigator.onLine) {
+          setError('طلبية بدون فاتورة تحتاج اتصالًا بالإنترنت (لتوليد رقمها التسلسلي)')
+          return
+        }
+        const invoice = await createOrderInvoice.mutateAsync({
+          input: { supplier_id: supplierId, amount: Number(amount), due_date: dueDate || null },
+          actorId: session!.user.id,
+        })
+        haptic('success')
+        setCreatedInvoiceId(invoice.id)
       } else {
-        const result = await captureInvoice.mutateAsync({ input, actorId: session!.user.id })
+        const result = await captureInvoice.mutateAsync({
+          input: { supplier_id: supplierId, paper_no: paperNo, amount: Number(amount), due_date: dueDate || null },
+          actorId: session!.user.id,
+        })
         haptic('success')
         if (result.mode === 'queued') {
           await Swal.fire({
@@ -94,12 +112,14 @@ export function InvoiceFormPage() {
     }
   }
 
-  const submitting = captureInvoice.isPending || updateInvoice.isPending
+  const submitting = captureInvoice.isPending || createOrderInvoice.isPending || updateInvoice.isPending
 
   if (createdInvoiceId) {
     return (
       <GlassCard className="mx-auto flex max-w-md flex-col gap-4">
-        <p className="text-status-ok">✓ حُفظت الفاتورة بنجاح</p>
+        <p className="text-status-ok">
+          {withoutInvoice ? '✓ سُجِّلت الطلبية كدَين (برقم تلقائي)' : '✓ حُفظت الفاتورة بنجاح'}
+        </p>
         <InvoicePhotoCapture
           invoiceId={createdInvoiceId}
           actorId={session!.user.id}
@@ -133,13 +153,30 @@ export function InvoiceFormPage() {
             </Select>
           </label>
         )}
+        {!isEdit && (
+          <label className="flex items-center gap-2 text-sm text-gray-300">
+            <input
+              type="checkbox"
+              className="h-4 w-4 accent-brand-red"
+              checked={withoutInvoice}
+              disabled={ordersBlocked}
+              onChange={(e) => setWithoutInvoice(e.target.checked)}
+            />
+            بدون فاتورة (رقم تلقائي، يُسجَّل كدَين)
+          </label>
+        )}
+        {ordersBlocked && (
+          <p className="text-xs text-status-warn">الطلبية محظورة لهذا المورد.</p>
+        )}
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           رقم الفاتورة الورقية
           <Input
-            required
+            required={!withoutInvoice}
+            disabled={withoutInvoice}
             inputMode="numeric"
             pattern="[0-9]*"
-            value={paperNo}
+            placeholder={withoutInvoice ? 'رقم تلقائي (NO-#####)' : undefined}
+            value={withoutInvoice ? '' : paperNo}
             onChange={(e) => setPaperNo(e.target.value.replace(/[^0-9]/g, ''))}
           />
         </label>

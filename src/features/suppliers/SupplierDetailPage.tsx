@@ -5,16 +5,13 @@ import { Button } from '../../components/ui/Button'
 import { BackLink } from '../../components/ui/BackLink'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
-import { useAuth } from '../auth/useAuth'
 import { useHasRole } from '../auth/useHasRole'
 import { useSupplier } from './hooks'
 import { useInvoicesBySupplier } from '../invoices/hooks'
 import { VisitScheduleEditor } from './VisitScheduleEditor'
-import { SupplierOrdersSection } from './SupplierOrdersSection'
 
 export function SupplierDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const { session } = useAuth()
   const { data: supplier, isLoading, error } = useSupplier(id!)
   const { data: invoices, isLoading: loadingInvoices } = useInvoicesBySupplier(id!)
   const canManage = useHasRole(['admin', 'super_admin'])
@@ -56,13 +53,6 @@ export function SupplierDetailPage() {
         <GlassCard>
           <h2 className="mb-3 font-semibold text-white">أيام الزيارة</h2>
           <VisitScheduleEditor supplier={supplier} />
-        </GlassCard>
-      )}
-
-      {canCapture && !supplier.orders_blocked && (
-        <GlassCard>
-          <h2 className="mb-3 font-semibold text-white">طلبية بدون فاتورة</h2>
-          <SupplierOrdersSection supplierId={supplier.id} actorId={session!.user.id} />
         </GlassCard>
       )}
 

@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
 import { RequireAuth } from '../features/auth/RequireAuth'
 import { LoginPage } from '../features/auth/LoginPage'
@@ -34,7 +34,9 @@ export const router = createBrowserRouter(
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
+      // الشاشة الافتراضية عند فتح التطبيق: تجار اليوم.
+      { index: true, element: <Navigate to="/suppliers/today" replace /> },
+      { path: 'dashboard', element: <DashboardPage /> },
       { path: 'suppliers', element: <SuppliersListPage /> },
       { path: 'suppliers/today', element: <TodayMerchantsPage /> },
       { path: 'suppliers/:id', element: <SupplierDetailPage /> },

@@ -16,9 +16,9 @@ interface NavTile {
 }
 
 const navItems: NavTile[] = [
-  { to: '/', label: 'لوحة التحكم', icon: '🛰️', end: true },
-  { to: '/suppliers', label: 'الموردون', icon: '🌠' },
   { to: '/suppliers/today', label: 'تجار اليوم', icon: '📅' },
+  { to: '/dashboard', label: 'لوحة التحكم', icon: '🛰️' },
+  { to: '/suppliers', label: 'الموردون', icon: '🌠' },
   { to: '/checks', label: 'الشيكات', icon: '📑' },
   { to: '/sales-report', label: 'تقرير المبيعات', icon: '📊' },
   { to: '/ledger', label: 'دفتر القيد', icon: '📒' },
