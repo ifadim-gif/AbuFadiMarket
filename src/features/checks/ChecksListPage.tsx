@@ -5,7 +5,7 @@ import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
-import { useHasRole } from '../auth/useHasRole'
+import { useHasCapability } from '../auth/useHasCapability'
 import { useChecks } from './hooks'
 import { statusBadgeVariant, statusLabels } from './statusLabels'
 import type { CheckStatus } from '../../types/domain'
@@ -17,7 +17,7 @@ export function ChecksListPage() {
   const { data: checks, isLoading, error } = useChecks(
     statusFilter === 'all' ? undefined : statusFilter,
   )
-  const canManage = useHasRole(['admin', 'super_admin'])
+  const canManage = useHasCapability('manage_finance')
 
   return (
     <div className="flex flex-col gap-4">

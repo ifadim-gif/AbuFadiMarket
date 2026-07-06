@@ -7,7 +7,7 @@ import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { Input, Select } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
-import { useHasRole } from '../auth/useHasRole'
+import { useHasCapability } from '../auth/useHasCapability'
 import { useSuppliers } from '../suppliers/hooks'
 import { useCreateOrderInvoice, useInvoice, useUpdateInvoice } from './hooks'
 import { isDuplicatePaperNoError } from './queries'
@@ -27,7 +27,7 @@ export function InvoiceFormPage() {
   const captureInvoice = useCaptureInvoice()
   const createOrderInvoice = useCreateOrderInvoice()
   const updateInvoice = useUpdateInvoice()
-  const canManage = useHasRole(['admin', 'super_admin'])
+  const canManage = useHasCapability('manage_finance')
   const [createdInvoiceId, setCreatedInvoiceId] = useState<string | null>(null)
 
   const [pickedSupplierId, setPickedSupplierId] = useState('')

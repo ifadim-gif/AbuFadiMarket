@@ -804,6 +804,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_user_role: {
+        Args: { p_role_id: string; p_user: string }
+        Returns: undefined
+      }
       award_stardust: {
         Args: { p_amount: number; p_profile_id: string }
         Returns: undefined
@@ -824,6 +828,7 @@ export type Database = {
         Args: { p_actor: string; p_check_id: string }
         Returns: string
       }
+      close_capabilities: { Args: { p_caps: string[] }; Returns: string[] }
       close_daily_orbit: {
         Args: {
           p_actor: string
@@ -872,6 +877,7 @@ export type Database = {
         }
         Returns: string
       }
+      delete_role: { Args: { p_role_id: string }; Returns: undefined }
       deposit_check: {
         Args: { p_actor: string; p_check_id: string }
         Returns: string
@@ -973,6 +979,10 @@ export type Database = {
       role_to_enum: {
         Args: { p_role_id: string }
         Returns: Database["public"]["Enums"]["user_role"]
+      }
+      save_role: {
+        Args: { p_capabilities: string[]; p_name: string; p_role_id?: string }
+        Returns: string
       }
       set_opening_balance: {
         Args: { p_amount: number; p_code: string }

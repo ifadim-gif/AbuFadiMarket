@@ -7,7 +7,7 @@ import { BackLink } from '../../components/ui/BackLink'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { useAuth } from '../auth/useAuth'
-import { useHasRole } from '../auth/useHasRole'
+import { useHasCapability } from '../auth/useHasCapability'
 import { useBounceCheck } from '../payments/hooks'
 import { useCheck } from './hooks'
 import { CheckPhotoCapture } from './CheckPhotoCapture'
@@ -17,8 +17,8 @@ export function CheckDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: check, isLoading, error } = useCheck(id!)
   const { session } = useAuth()
-  const canBounce = useHasRole(['admin', 'super_admin'])
-  const canCapture = useHasRole(['admin', 'super_admin', 'cashier'])
+  const canBounce = useHasCapability('manage_finance')
+  const canCapture = useHasCapability('capture_documents')
   const bounceCheck = useBounceCheck()
   const [bounceError, setBounceError] = useState<string | null>(null)
 

@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { BackLink } from '../../components/ui/BackLink'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
-import { useHasRole } from '../auth/useHasRole'
+import { useHasCapability } from '../auth/useHasCapability'
 import { useSupplier } from './hooks'
 import { useInvoicesBySupplier } from '../invoices/hooks'
 import { VisitScheduleEditor } from './VisitScheduleEditor'
@@ -14,8 +14,8 @@ export function SupplierDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { data: supplier, isLoading, error } = useSupplier(id!)
   const { data: invoices, isLoading: loadingInvoices } = useInvoicesBySupplier(id!)
-  const canManage = useHasRole(['admin', 'super_admin'])
-  const canCapture = useHasRole(['admin', 'super_admin', 'cashier'])
+  const canManage = useHasCapability('manage_finance')
+  const canCapture = useHasCapability('capture_documents')
 
   if (isLoading) return <LoadingSpinner label="جارٍ تحميل بيانات المورد..." />
   if (error || !supplier) return <ErrorBanner message="تعذّر تحميل بيانات المورد" />

@@ -21,7 +21,8 @@ import { SalesReportPage } from '../features/salesreport/SalesReportPage'
 import { BackOfficePage } from '../features/backoffice/BackOfficePage'
 import { ExpensesPage } from '../features/expenses/ExpensesPage'
 import { OpeningBalancesPage } from '../features/opening/OpeningBalancesPage'
-import { RequireRole } from '../features/auth/RequireRole'
+import { RolesAdminPage } from '../features/roles/RolesAdminPage'
+import { RequireCapability } from '../features/auth/RequireCapability'
 
 export const router = createBrowserRouter(
   [
@@ -43,60 +44,60 @@ export const router = createBrowserRouter(
       {
         path: 'invoices/new',
         element: (
-          <RequireRole allow={['admin', 'super_admin', 'cashier']}>
+          <RequireCapability cap="capture_documents">
             <InvoiceFormPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       {
         path: 'invoices/:id/edit',
         element: (
-          <RequireRole allow={['admin', 'super_admin']}>
+          <RequireCapability cap="manage_finance">
             <InvoiceFormPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       { path: 'checks', element: <ChecksListPage /> },
       {
         path: 'checks/new',
         element: (
-          <RequireRole allow={['admin', 'super_admin', 'cashier']}>
+          <RequireCapability cap="capture_documents">
             <CheckFormPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       { path: 'checks/:id', element: <CheckDetailPage /> },
       {
         path: 'suppliers/:id/pay',
         element: (
-          <RequireRole allow={['admin', 'super_admin']}>
+          <RequireCapability cap="manage_finance">
             <PaySupplierPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       {
         path: 'skim',
         element: (
-          <RequireRole allow={['admin', 'super_admin', 'cashier']}>
+          <RequireCapability cap="capture_documents">
             <SkimDrawerPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       { path: 'ledger', element: <LedgerPage /> },
       {
         path: 'close',
         element: (
-          <RequireRole allow={['admin', 'super_admin', 'cashier']}>
+          <RequireCapability cap="capture_documents">
             <DailyClosePage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       {
         path: 'obligations',
         element: (
-          <RequireRole allow={['admin', 'super_admin']}>
+          <RequireCapability cap="manage_finance">
             <ObligationsPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       { path: 'nebula', element: <NebulaPage /> },
@@ -104,33 +105,41 @@ export const router = createBrowserRouter(
       {
         path: 'sales-report',
         element: (
-          <RequireRole allow={['admin', 'super_admin', 'cashier']}>
+          <RequireCapability cap="capture_documents">
             <SalesReportPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       {
         path: 'back-office',
         element: (
-          <RequireRole allow={['admin', 'super_admin']}>
+          <RequireCapability cap="manage_finance">
             <BackOfficePage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       {
         path: 'expenses',
         element: (
-          <RequireRole allow={['admin', 'super_admin', 'cashier']}>
+          <RequireCapability cap="capture_documents">
             <ExpensesPage />
-          </RequireRole>
+          </RequireCapability>
         ),
       },
       {
         path: 'opening-balances',
         element: (
-          <RequireRole allow={['super_admin']}>
+          <RequireCapability cap="manage_system">
             <OpeningBalancesPage />
-          </RequireRole>
+          </RequireCapability>
+        ),
+      },
+      {
+        path: 'admin/roles',
+        element: (
+          <RequireCapability cap="manage_system">
+            <RolesAdminPage />
+          </RequireCapability>
         ),
       },
     ],

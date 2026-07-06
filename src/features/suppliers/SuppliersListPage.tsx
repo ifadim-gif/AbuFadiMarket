@@ -6,13 +6,13 @@ import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
-import { useHasRole } from '../auth/useHasRole'
+import { useHasCapability } from '../auth/useHasCapability'
 import { useCreateSupplier, useSuppliers } from './hooks'
 import { SupplierExcelImport } from './SupplierExcelImport'
 
 export function SuppliersListPage() {
   const { data: suppliers, isLoading, error } = useSuppliers()
-  const canManage = useHasRole(['admin', 'super_admin'])
+  const canManage = useHasCapability('manage_finance')
   const [showForm, setShowForm] = useState(false)
   const [showImport, setShowImport] = useState(false)
   const [search, setSearch] = useState('')

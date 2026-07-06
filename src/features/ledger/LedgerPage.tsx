@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { useAuth } from '../auth/useAuth'
-import { useHasRole } from '../auth/useHasRole'
+import { useHasCapability } from '../auth/useHasCapability'
 import { useReverseTransaction } from '../payments/hooks'
 import { useLedgerBalance, useTransactions } from './hooks'
 
@@ -25,7 +25,7 @@ export function LedgerPage() {
   const { data: transactions, isLoading, error } = useTransactions()
   const { data: balance } = useLedgerBalance()
   const { session } = useAuth()
-  const canReverse = useHasRole(['admin', 'super_admin'])
+  const canReverse = useHasCapability('manage_finance')
   const reverseTransaction = useReverseTransaction()
   const [reverseError, setReverseError] = useState<string | null>(null)
 

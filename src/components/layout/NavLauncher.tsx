@@ -3,16 +3,16 @@ import { motion } from 'framer-motion'
 import { NavLink, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import { useAuth } from '../../features/auth/useAuth'
+import { capabilitiesForRole, type Capability } from '../../features/auth/capabilities'
 import { haptic } from '../../lib/haptics'
 import logoMark from '../../assets/logo-mark.png'
-import type { UserRole } from '../../types/domain'
 
 interface NavTile {
   to: string
   label: string
   icon: string
   end?: boolean
-  allow?: UserRole[]
+  cap?: Capability
 }
 
 const navItems: NavTile[] = [
@@ -26,22 +26,23 @@ const navItems: NavTile[] = [
   { to: '/expenses', label: 'المصروفات', icon: '💸' },
   { to: '/close', label: 'إغلاق اليوم', icon: '🪐' },
   { to: '/nebula', label: 'سديم التدفق', icon: '🌫️' },
-  { to: '/obligations', label: 'الالتزامات', icon: '📌', allow: ['admin', 'super_admin'] },
-  { to: '/back-office', label: 'الباك أوفيس', icon: '🛠️', allow: ['admin', 'super_admin'] },
-  { to: '/opening-balances', label: 'الأرصدة الافتتاحية', icon: '🧮', allow: ['super_admin'] },
+  { to: '/obligations', label: 'الالتزامات', icon: '📌', cap: 'manage_finance' },
+  { to: '/back-office', label: 'الباك أوفيس', icon: '🛠️', cap: 'manage_finance' },
+  { to: '/opening-balances', label: 'الأرصدة الافتتاحية', icon: '🧮', cap: 'manage_system' },
+  { to: '/admin/roles', label: 'الأدوار والصلاحيات', icon: '🛡️', cap: 'manage_system' },
 ]
 
 interface QuickAction {
   to: string
   label: string
   icon: string
-  allow: UserRole[]
+  cap: Capability
 }
 
 const quickActions: QuickAction[] = [
-  { to: '/invoices/new', label: 'فاتورة جديدة', icon: '🧾', allow: ['admin', 'super_admin', 'cashier'] },
-  { to: '/skim', label: 'إفراغ الدرج', icon: '💵', allow: ['admin', 'super_admin', 'cashier'] },
-  { to: '/close', label: 'إغلاق اليوم', icon: '🪐', allow: ['admin', 'super_admin', 'cashier'] },
+  { to: '/invoices/new', label: 'فاتورة جديدة', icon: '🧾', cap: 'capture_documents' },
+  { to: '/skim', label: 'إفراغ الدرج', icon: '💵', cap: 'capture_documents' },
+  { to: '/close', label: 'إغلاق اليوم', icon: '🪐', cap: 'capture_documents' },
 ]
 
 export function NavLauncher() {
@@ -50,9 +51,9 @@ export function NavLauncher() {
   const { profile } = useAuth()
 
   if (!profile) return null
-  const role = profile.role
-  const visibleNav = navItems.filter((item) => !item.allow || item.allow.includes(role))
-  const visibleActions = quickActions.filter((a) => a.allow.includes(role))
+  const caps = capabilitiesForRole(profile.role)
+  const visibleNav = navItems.filter((item) => !item.cap || caps.includes(item.cap))
+  const visibleActions = quickActions.filter((a) => caps.includes(a.cap))
 
   function toggle() {
     haptic('tap')
