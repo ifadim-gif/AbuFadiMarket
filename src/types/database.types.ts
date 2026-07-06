@@ -117,14 +117,17 @@ export type Database = {
       categories: {
         Row: {
           id: string
+          kind: string
           name: string
         }
         Insert: {
           id?: string
+          kind?: string
           name: string
         }
         Update: {
           id?: string
+          kind?: string
           name?: string
         }
         Relationships: []
@@ -657,6 +660,7 @@ export type Database = {
       suppliers: {
         Row: {
           balance: number
+          category_id: string | null
           created_at: string | null
           id: string
           name: string
@@ -672,6 +676,7 @@ export type Database = {
         }
         Insert: {
           balance?: number
+          category_id?: string | null
           created_at?: string | null
           id?: string
           name: string
@@ -687,6 +692,7 @@ export type Database = {
         }
         Update: {
           balance?: number
+          category_id?: string | null
           created_at?: string | null
           id?: string
           name?: string
@@ -700,7 +706,15 @@ export type Database = {
           visit_days?: number[] | null
           visit_pattern?: Database["public"]["Enums"]["visit_pattern_type"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transaction_checks: {
         Row: {
@@ -746,6 +760,7 @@ export type Database = {
       }
       transactions: {
         Row: {
+          category_id: string | null
           created_at: string | null
           id: string
           note: string | null
@@ -756,6 +771,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          category_id?: string | null
           created_at?: string | null
           id?: string
           note?: string | null
@@ -766,6 +782,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          category_id?: string | null
           created_at?: string | null
           id?: string
           note?: string | null
@@ -776,6 +793,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "transactions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "transactions_reversed_by_fkey"
             columns: ["reversed_by"]
@@ -954,6 +978,7 @@ export type Database = {
         Args: {
           p_actor: string
           p_amount: number
+          p_category_id?: string
           p_note?: string
           p_source: string
         }
@@ -963,6 +988,7 @@ export type Database = {
         Args: {
           p_actor: string
           p_amount: number
+          p_category_id?: string
           p_note?: string
           p_source: string
         }
