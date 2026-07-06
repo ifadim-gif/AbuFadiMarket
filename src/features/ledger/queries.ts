@@ -20,6 +20,18 @@ export interface LedgerBalance {
   totalCredit: number
 }
 
+export async function listTransactionsBySupplier(
+  supplierId: string,
+): Promise<TransactionWithSupplier[]> {
+  const { data, error } = await supabase
+    .from('transactions')
+    .select('*, supplier:suppliers(id, name)')
+    .eq('supplier_id', supplierId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
 export async function getLedgerBalance(): Promise<LedgerBalance> {
   const { data, error } = await supabase.from('ledger_entries').select('debit, credit')
   if (error) throw error

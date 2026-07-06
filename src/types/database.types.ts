@@ -692,6 +692,48 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_images: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          image_url: string
+          sort_order: number
+          supplier_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_url: string
+          sort_order?: number
+          supplier_id: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_url?: string
+          sort_order?: number
+          supplier_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_images_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_images_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppliers: {
         Row: {
           balance: number
@@ -700,6 +742,7 @@ export type Database = {
           id: string
           name: string
           name_he: string | null
+          notes: string | null
           orders_blocked: boolean
           phone: string | null
           red_flag: boolean
@@ -717,6 +760,7 @@ export type Database = {
           id?: string
           name: string
           name_he?: string | null
+          notes?: string | null
           orders_blocked?: boolean
           phone?: string | null
           red_flag?: boolean
@@ -734,6 +778,7 @@ export type Database = {
           id?: string
           name?: string
           name_he?: string | null
+          notes?: string | null
           orders_blocked?: boolean
           phone?: string | null
           red_flag?: boolean
