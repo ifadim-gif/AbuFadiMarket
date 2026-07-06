@@ -93,6 +93,27 @@ export type Database = {
           },
         ]
       }
+      capabilities: {
+        Row: {
+          code: string
+          description_ar: string | null
+          name_ar: string
+          sort_order: number
+        }
+        Insert: {
+          code: string
+          description_ar?: string | null
+          name_ar: string
+          sort_order?: number
+        }
+        Update: {
+          code?: string
+          description_ar?: string | null
+          name_ar?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           id: string
@@ -547,6 +568,7 @@ export type Database = {
           full_name: string
           id: string
           role: Database["public"]["Enums"]["user_role"]
+          role_id: string
           stardust: number
           unlocked_planets: string[] | null
         }
@@ -555,6 +577,7 @@ export type Database = {
           full_name: string
           id: string
           role?: Database["public"]["Enums"]["user_role"]
+          role_id: string
           stardust?: number
           unlocked_planets?: string[] | null
         }
@@ -563,8 +586,71 @@ export type Database = {
           full_name?: string
           id?: string
           role?: Database["public"]["Enums"]["user_role"]
+          role_id?: string
           stardust?: number
           unlocked_planets?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_capabilities: {
+        Row: {
+          capability_code: string
+          role_id: string
+        }
+        Insert: {
+          capability_code: string
+          role_id: string
+        }
+        Update: {
+          capability_code?: string
+          role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_capabilities_capability_code_fkey"
+            columns: ["capability_code"]
+            isOneToOne: false
+            referencedRelation: "capabilities"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "role_capabilities_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          code: string | null
+          created_at: string | null
+          id: string
+          is_system: boolean
+          name_ar: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string | null
+          id?: string
+          is_system?: boolean
+          name_ar: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string | null
+          id?: string
+          is_system?: boolean
+          name_ar?: string
         }
         Relationships: []
       }
@@ -794,6 +880,9 @@ export type Database = {
         Args: { p_actor: string; p_check_id: string }
         Returns: string
       }
+      has_capability:
+        | { Args: { p_code: string }; Returns: boolean }
+        | { Args: { p_code: string; p_user: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       pay_supplier: {
         Args: {
@@ -880,6 +969,10 @@ export type Database = {
       reverse_transaction_impl: {
         Args: { p_actor: string; p_transaction_id: string }
         Returns: string
+      }
+      role_to_enum: {
+        Args: { p_role_id: string }
+        Returns: Database["public"]["Enums"]["user_role"]
       }
       set_opening_balance: {
         Args: { p_amount: number; p_code: string }
