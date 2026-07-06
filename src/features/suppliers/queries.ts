@@ -18,6 +18,7 @@ export async function getSupplier(id: string): Promise<Supplier> {
 
 export interface CreateSupplierInput {
   name: string
+  name_he: string | null
   phone: string | null
   visit_days: number[] | null
 }
@@ -52,12 +53,29 @@ export async function updateSupplierVisitSchedule(
 export interface BulkSupplierRow {
   supplier_no?: number
   name: string
+  name_he: string | null
   phone: string | null
   visit_days: number[] | null
   orders_blocked: boolean
+  category_id: string | null
 }
 
+// يُقسَّم لدفعتين متجانستَي المفاتيح: PostgREST يبني قائمة أعمدة الإدراج الجماعي من
+// اتحاد مفاتيح كل الصفوف، فوجود صفّ برقم تعريف صريح إلى جانب صفّ بلا رقم (المفتاح
+// موجود بقيمة undefined) يجعله يُرسِل NULL صراحةً للصفّ الثاني بدل حذف العمود —
+// فيصطدم بقيد NOT NULL على supplier_no بدل استخدام DEFAULT التسلسلي.
 export async function bulkCreateSuppliers(rows: BulkSupplierRow[]): Promise<void> {
-  const { error } = await supabase.from('suppliers').insert(rows)
-  if (error) throw error
+  const withNo = rows.filter((r) => r.supplier_no !== undefined)
+  const withoutNo = rows
+    .filter((r) => r.supplier_no === undefined)
+    .map(({ supplier_no: _supplier_no, ...rest }) => rest)
+
+  if (withoutNo.length > 0) {
+    const { error } = await supabase.from('suppliers').insert(withoutNo)
+    if (error) throw error
+  }
+  if (withNo.length > 0) {
+    const { error } = await supabase.from('suppliers').insert(withNo)
+    if (error) throw error
+  }
 }

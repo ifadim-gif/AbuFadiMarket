@@ -664,6 +664,7 @@ export type Database = {
           created_at: string | null
           id: string
           name: string
+          name_he: string | null
           orders_blocked: boolean
           phone: string | null
           red_flag: boolean
@@ -680,6 +681,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           name: string
+          name_he?: string | null
           orders_blocked?: boolean
           phone?: string | null
           red_flag?: boolean
@@ -696,6 +698,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           name?: string
+          name_he?: string | null
           orders_blocked?: boolean
           phone?: string | null
           red_flag?: boolean

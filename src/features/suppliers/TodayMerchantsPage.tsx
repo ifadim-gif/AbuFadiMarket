@@ -22,7 +22,13 @@ export function TodayMerchantsPage() {
   const searched = useMemo(() => {
     const q = search.trim()
     if (!q || !suppliers) return null
-    return suppliers.filter((s) => arabicIncludes(s.name, q))
+    return suppliers.filter(
+      (s) =>
+        arabicIncludes(s.name, q) ||
+        (s.name_he ?? '').toLowerCase().includes(q.toLowerCase()) ||
+        arabicIncludes(s.phone, q) ||
+        String(s.supplier_no).includes(q),
+    )
   }, [suppliers, search])
 
   return (
@@ -60,7 +66,15 @@ function SupplierGrid({
   emptyText,
 }: {
   title: string
-  suppliers: { id: string; name: string; phone: string | null; supplier_no: number; red_flag: boolean; orders_blocked: boolean }[]
+  suppliers: {
+    id: string
+    name: string
+    name_he: string | null
+    phone: string | null
+    supplier_no: number
+    red_flag: boolean
+    orders_blocked: boolean
+  }[]
   emptyText: string
 }) {
   return (
@@ -74,6 +88,7 @@ function SupplierGrid({
                 <h3 className="font-semibold text-white">{s.name}</h3>
                 {s.red_flag && <Badge variant="danger">علامة حمراء</Badge>}
               </div>
+              {s.name_he && <p className="text-sm text-gray-400" dir="rtl">{s.name_he}</p>}
               <p className="mt-1 text-xs text-gray-500">رقم المورد: {s.supplier_no}</p>
               {s.phone && <p className="mt-1 text-sm text-gray-400">{s.phone}</p>}
               {s.orders_blocked && <Badge variant="warn" className="mt-2">الطلبية محظورة</Badge>}

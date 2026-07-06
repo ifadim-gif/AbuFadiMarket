@@ -25,6 +25,7 @@ export function SuppliersListPage() {
     return suppliers.filter(
       (s) =>
         arabicIncludes(s.name, q) ||
+        (s.name_he ?? '').toLowerCase().includes(q.toLowerCase()) ||
         arabicIncludes(s.phone, q) ||
         String(s.supplier_no).includes(q),
     )
@@ -69,6 +70,7 @@ export function SuppliersListPage() {
                 <h2 className="font-semibold text-white">{s.name}</h2>
                 {s.red_flag && <Badge variant="danger">علامة حمراء</Badge>}
               </div>
+              {s.name_he && <p className="text-sm text-gray-400" dir="rtl">{s.name_he}</p>}
               <p className="mt-1 text-xs text-gray-500">رقم المورد: {s.supplier_no}</p>
               {s.phone && <p className="mt-1 text-sm text-gray-400">{s.phone}</p>}
               <p className="mt-3 text-sm text-gray-300">
@@ -88,12 +90,18 @@ export function SuppliersListPage() {
 
 function CreateSupplierForm({ onDone }: { onDone: () => void }) {
   const [name, setName] = useState('')
+  const [nameHe, setNameHe] = useState('')
   const [phone, setPhone] = useState('')
   const createSupplier = useCreateSupplier()
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    await createSupplier.mutateAsync({ name, phone: phone || null, visit_days: null })
+    await createSupplier.mutateAsync({
+      name,
+      name_he: nameHe || null,
+      phone: phone || null,
+      visit_days: null,
+    })
     onDone()
   }
 
@@ -103,6 +111,10 @@ function CreateSupplierForm({ onDone }: { onDone: () => void }) {
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           اسم المورد
           <Input required value={name} onChange={(e) => setName(e.target.value)} />
+        </label>
+        <label className="flex flex-col gap-1 text-sm text-gray-300">
+          الاسم العبري (اختياري)
+          <Input dir="rtl" value={nameHe} onChange={(e) => setNameHe(e.target.value)} />
         </label>
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           الهاتف
