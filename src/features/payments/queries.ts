@@ -4,6 +4,7 @@ export async function payToSupplier(input: {
   supplierId: string
   cash: number
   drawer: number
+  bank: number
   checkIds: string[]
   actorId: string
 }): Promise<string> {
@@ -11,6 +12,7 @@ export async function payToSupplier(input: {
     p_supplier: input.supplierId,
     p_cash: input.cash,
     p_drawer: input.drawer,
+    p_bank: input.bank,
     p_check_ids: input.checkIds,
     p_actor: input.actorId,
   })

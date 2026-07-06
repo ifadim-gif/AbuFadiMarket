@@ -93,6 +93,41 @@ export type Database = {
           },
         ]
       }
+      bank_loans: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          note: string | null
+          party_name: string
+          principal: number
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          party_name: string
+          principal: number
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          party_name?: string
+          principal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_loans_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       capabilities: {
         Row: {
           code: string
@@ -766,6 +801,7 @@ export type Database = {
           category_id: string | null
           created_at: string | null
           id: string
+          loan_id: string | null
           note: string | null
           reversed_by: string | null
           supplier_id: string | null
@@ -777,6 +813,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           id?: string
+          loan_id?: string | null
           note?: string | null
           reversed_by?: string | null
           supplier_id?: string | null
@@ -788,6 +825,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           id?: string
+          loan_id?: string | null
           note?: string | null
           reversed_by?: string | null
           supplier_id?: string | null
@@ -920,6 +958,7 @@ export type Database = {
       pay_supplier: {
         Args: {
           p_actor: string
+          p_bank: number
           p_cash: number
           p_check_ids: string[]
           p_drawer: number
@@ -930,6 +969,7 @@ export type Database = {
       pay_supplier_impl: {
         Args: {
           p_actor: string
+          p_bank: number
           p_cash: number
           p_check_ids: string[]
           p_drawer: number
@@ -946,6 +986,10 @@ export type Database = {
           projected_liquidity: number
           supplier_obligation: number
         }[]
+      }
+      record_bank_loan: {
+        Args: { p_amount: number; p_note?: string; p_party: string }
+        Returns: string
       }
       record_daily_sales: {
         Args: {
@@ -992,6 +1036,15 @@ export type Database = {
           p_actor: string
           p_amount: number
           p_category_id?: string
+          p_note?: string
+          p_source: string
+        }
+        Returns: string
+      }
+      record_loan_payment: {
+        Args: {
+          p_amount: number
+          p_loan_id: string
           p_note?: string
           p_source: string
         }
@@ -1047,6 +1100,7 @@ export type Database = {
         | "operating_expense"
         | "opening_equity"
         | "purchases"
+        | "loans_payable"
       check_status:
         | "available"
         | "endorsed"
@@ -1063,6 +1117,8 @@ export type Database = {
         | "receivable_settlement"
         | "opening_balance"
         | "purchase"
+        | "loan_received"
+        | "loan_payment"
       user_role: "super_admin" | "admin" | "monitor" | "cashier"
       visit_pattern_type: "weekly" | "monthly" | "unspecified"
     }
@@ -1207,6 +1263,7 @@ export const Constants = {
         "operating_expense",
         "opening_equity",
         "purchases",
+        "loans_payable",
       ],
       check_status: ["available", "endorsed", "cashed", "bounced", "deposited"],
       txn_type: [
@@ -1219,6 +1276,8 @@ export const Constants = {
         "receivable_settlement",
         "opening_balance",
         "purchase",
+        "loan_received",
+        "loan_payment",
       ],
       user_role: ["super_admin", "admin", "monitor", "cashier"],
       visit_pattern_type: ["weekly", "monthly", "unspecified"],

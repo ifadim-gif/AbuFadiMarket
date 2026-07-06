@@ -6,6 +6,7 @@ import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { Input } from '../../components/ui/Input'
 import { useAuth } from '../auth/useAuth'
+import { LoansSection } from '../loans/LoansSection'
 import { useCreateObligation, useObligations, useToggleObligationSettled } from './hooks'
 
 export function ObligationsPage() {
@@ -38,9 +39,13 @@ export function ObligationsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-lg font-bold text-white">الالتزامات المتوقّعة</h1>
+      <h1 className="text-lg font-bold text-white">الالتزامات</h1>
+
+      <LoansSection />
+
+      <h2 className="text-base font-bold text-white">الالتزامات المتوقّعة</h2>
       <p className="text-sm text-gray-400">
-        شيكات صادرة من بنك المحل، ضريبة، تأمين، مصاريف سيارة... تُغذّي سديم التدفّق النقدي.
+        تنبّؤ تخطيطي فقط (لا يمسّ الحسابات): ضريبة، تأمين، مصاريف سيارة... تُغذّي سديم التدفّق النقدي.
       </p>
 
       <GlassCard>

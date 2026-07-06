@@ -21,6 +21,7 @@ export function PaySupplierPage() {
 
   const [cash, setCash] = useState('')
   const [drawer, setDrawer] = useState('')
+  const [bank, setBank] = useState('')
   const [selectedCheckIds, setSelectedCheckIds] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
 
@@ -33,7 +34,8 @@ export function PaySupplierPage() {
   )
   const cashAmount = Number(cash) || 0
   const drawerAmount = Number(drawer) || 0
-  const total = cashAmount + drawerAmount + checksTotal
+  const bankAmount = Number(bank) || 0
+  const total = cashAmount + drawerAmount + bankAmount + checksTotal
 
   function toggleCheck(checkId: string) {
     setSelectedCheckIds((prev) =>
@@ -45,7 +47,7 @@ export function PaySupplierPage() {
     e.preventDefault()
     setError(null)
     if (total <= 0) {
-      setError('يجب إدخال مبلغ نقدي أو من الصندوق أو اختيار شيك واحد على الأقل')
+      setError('يجب إدخال مبلغ نقدي أو من الصندوق أو البنك أو اختيار شيك واحد على الأقل')
       return
     }
     try {
@@ -53,6 +55,7 @@ export function PaySupplierPage() {
         supplierId: id!,
         cash: cashAmount,
         drawer: drawerAmount,
+        bank: bankAmount,
         checkIds: selectedCheckIds,
         actorId: session!.user.id,
       })
@@ -95,6 +98,17 @@ export function PaySupplierPage() {
             onChange={(e) => setDrawer(e.target.value)}
           />
           <span className="text-xs text-gray-500">يُسجَّل تلقائيًا كتفريغ للصندوق ثم سداد.</span>
+        </label>
+
+        <label className="flex flex-col gap-1 text-sm text-gray-300">
+          شيك/تحويل بنكي من حساب البنك
+          <Input
+            type="number"
+            step="0.01"
+            min="0"
+            value={bank}
+            onChange={(e) => setBank(e.target.value)}
+          />
         </label>
 
         <div>
