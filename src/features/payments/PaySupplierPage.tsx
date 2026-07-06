@@ -58,8 +58,8 @@ export function PaySupplierPage() {
       })
       void checkAndBroadcastRecord(txnId, total)
       navigate(`/suppliers/${id}`)
-    } catch {
-      setError('تعذّر تنفيذ عملية السداد')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'تعذّر تنفيذ عملية السداد')
     }
   }
 
