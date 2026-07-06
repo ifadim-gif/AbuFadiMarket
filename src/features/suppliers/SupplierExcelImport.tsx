@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { useBulkCreateSuppliers } from './hooks'
 import { dayLabels } from './visitSchedule'
+import { downloadSupplierTemplate } from './supplierTemplate'
 import type { BulkSupplierRow } from './queries'
 
 const truthyValues = new Set(['1', 'true', 'نعم', 'yes', 'y'])
@@ -99,7 +100,7 @@ export function SupplierExcelImport({ onDone }: { onDone: () => void }) {
     <div className="flex flex-col gap-3">
       <p className="text-xs text-gray-500">
         الأعمدة المتوقعة: رقم التعريف (اختياري)، الاسم، الهاتف، أيام الزيارة (مثال: الأحد،الثلاثاء أو
-        0،2)، حظر الطلبية (نعم/لا).
+        0،2)، حظر الطلبية (نعم/لا). حمّل القالب الجاهز لضمان التوافق.
       </p>
       <input
         ref={fileInput}
@@ -108,9 +109,14 @@ export function SupplierExcelImport({ onDone }: { onDone: () => void }) {
         className="hidden"
         onChange={handleFile}
       />
-      <Button type="button" variant="secondary" onClick={() => fileInput.current?.click()}>
-        اختيار ملف إكسل
-      </Button>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" variant="secondary" onClick={downloadSupplierTemplate}>
+          ⬇️ تحميل قالب إكسل
+        </Button>
+        <Button type="button" variant="secondary" onClick={() => fileInput.current?.click()}>
+          اختيار ملف إكسل
+        </Button>
+      </div>
       {error && <ErrorBanner message={error} />}
       {rows && (
         <div className="flex flex-col gap-2">
