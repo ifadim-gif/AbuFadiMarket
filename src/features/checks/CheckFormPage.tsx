@@ -68,8 +68,10 @@ export function CheckFormPage() {
         <label className="flex flex-col gap-1 text-sm text-gray-300">
           رقم حساب الزبون (في نظام الكاش)
           <Input
+            inputMode="numeric"
+            pattern="[0-9]*"
             value={customerRef}
-            onChange={(e) => setCustomerRef(e.target.value)}
+            onChange={(e) => setCustomerRef(e.target.value.replace(/[^0-9]/g, ''))}
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-gray-300">

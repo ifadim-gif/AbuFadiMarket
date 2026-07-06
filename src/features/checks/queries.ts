@@ -39,3 +39,51 @@ export async function createCheck(input: CreateCheckInput, actorId: string): Pro
   if (error) throw error
   return data
 }
+
+export interface CheckImageRow {
+  id: string
+  check_id: string
+  image_url: string
+  created_at: string | null
+}
+
+export async function listCheckImages(checkId: string): Promise<CheckImageRow[]> {
+  const { data, error } = await supabase
+    .from('check_images')
+    .select('*')
+    .eq('check_id', checkId)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data
+}
+
+export async function uploadCheckImage(
+  checkId: string,
+  file: File | Blob,
+  actorId: string,
+): Promise<CheckImageRow> {
+  const ext = file instanceof File ? file.name.split('.').pop() || 'jpg' : 'jpg'
+  const path = `${checkId}/${crypto.randomUUID()}.${ext}`
+  const { error: uploadError } = await supabase.storage.from('check-photos').upload(path, file)
+  if (uploadError) throw uploadError
+
+  const { data, error } = await supabase
+    .from('check_images')
+    .insert({ check_id: checkId, image_url: path, created_by: actorId })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function getCheckImageSignedUrl(path: string): Promise<string> {
+  const { data, error } = await supabase.storage.from('check-photos').createSignedUrl(path, 3600)
+  if (error) throw error
+  return data.signedUrl
+}
+
+export async function deleteCheckImage(id: string, path: string): Promise<void> {
+  await supabase.storage.from('check-photos').remove([path])
+  const { error } = await supabase.from('check_images').delete().eq('id', id)
+  if (error) throw error
+}

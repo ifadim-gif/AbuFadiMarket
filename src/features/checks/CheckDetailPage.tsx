@@ -10,6 +10,7 @@ import { useAuth } from '../auth/useAuth'
 import { useHasRole } from '../auth/useHasRole'
 import { useBounceCheck } from '../payments/hooks'
 import { useCheck } from './hooks'
+import { CheckPhotoCapture } from './CheckPhotoCapture'
 import { statusBadgeVariant, statusLabels } from './statusLabels'
 
 export function CheckDetailPage() {
@@ -17,6 +18,7 @@ export function CheckDetailPage() {
   const { data: check, isLoading, error } = useCheck(id!)
   const { session } = useAuth()
   const canBounce = useHasRole(['admin', 'super_admin'])
+  const canCapture = useHasRole(['admin', 'super_admin', 'cashier'])
   const bounceCheck = useBounceCheck()
   const [bounceError, setBounceError] = useState<string | null>(null)
 
@@ -43,6 +45,9 @@ export function CheckDetailPage() {
         {check.drawer_name && (
           <p className="mt-2 text-sm text-gray-300">صاحب الشيك: {check.drawer_name}</p>
         )}
+        {check.customer_ref && (
+          <p className="mt-1 text-sm text-gray-300">رقم حساب الزبون: {check.customer_ref}</p>
+        )}
         {check.due_date && (
           <p className="mt-1 text-sm text-gray-400">تاريخ الاستحقاق: {check.due_date}</p>
         )}
@@ -56,6 +61,12 @@ export function CheckDetailPage() {
           </div>
         )}
       </GlassCard>
+
+      {canCapture && (
+        <GlassCard>
+          <CheckPhotoCapture checkId={check.id} actorId={session!.user.id} canManage={canBounce} />
+        </GlassCard>
+      )}
     </div>
   )
 }

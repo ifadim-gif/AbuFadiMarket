@@ -108,6 +108,45 @@ export type Database = {
         }
         Relationships: []
       }
+      check_images: {
+        Row: {
+          check_id: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          image_url: string
+        }
+        Insert: {
+          check_id: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_url: string
+        }
+        Update: {
+          check_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "check_images_check_id_fkey"
+            columns: ["check_id"]
+            isOneToOne: false
+            referencedRelation: "checks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "check_images_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checks: {
         Row: {
           amount: number
