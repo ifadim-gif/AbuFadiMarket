@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import { GlassCard } from '../../components/ui/GlassCard'
 import { Badge } from '../../components/ui/Badge'
 import { Button } from '../../components/ui/Button'
@@ -27,6 +28,15 @@ export function CheckDetailPage() {
 
   async function handleBounce() {
     setBounceError(null)
+    const confirm = await Swal.fire({
+      icon: 'warning',
+      title: 'تأكيد الشيك الراجع',
+      text: 'سيُعاد دَين المورد ويُوضَع عليه علامة حمراء. هذا لا يُمكن التراجع عنه بسهولة.',
+      showCancelButton: true,
+      confirmButtonText: 'تسجيل كراجع',
+      cancelButtonText: 'إلغاء',
+    })
+    if (!confirm.isConfirmed) return
     try {
       await bounceCheck.mutateAsync({ checkId: id!, actorId: session!.user.id })
     } catch {

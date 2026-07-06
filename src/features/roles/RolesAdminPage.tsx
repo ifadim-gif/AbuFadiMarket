@@ -154,6 +154,15 @@ function RoleRowEditor({ role, onDelete }: { role: RoleRow; onDelete: () => void
     caps.some((c) => !role.capabilities.includes(c))
 
   async function handleSave() {
+    const confirm = await Swal.fire({
+      icon: 'warning',
+      title: `تأكيد تعديل صلاحيات "${role.name_ar}"؟`,
+      text: 'سيتأثّر كل مستخدم بهذا الدور فورًا.',
+      showCancelButton: true,
+      confirmButtonText: 'حفظ',
+      cancelButtonText: 'إلغاء',
+    })
+    if (!confirm.isConfirmed) return
     await saveRole.mutateAsync({ roleId: role.id, name: name.trim(), capabilities: caps })
   }
 
@@ -189,8 +198,17 @@ function UsersSection({ roles }: { roles: RoleRow[] }) {
   const { session } = useAuth()
   const [error, setError] = useState<string | null>(null)
 
-  async function handleAssign(userId: string, roleId: string) {
+  async function handleAssign(userId: string, userName: string, roleId: string, roleName: string) {
     setError(null)
+    const confirm = await Swal.fire({
+      icon: 'warning',
+      title: 'تأكيد تغيير الدور',
+      text: `سيصبح دور "${userName}" هو "${roleName}".`,
+      showCancelButton: true,
+      confirmButtonText: 'تعيين',
+      cancelButtonText: 'إلغاء',
+    })
+    if (!confirm.isConfirmed) return
     try {
       await assign.mutateAsync({ userId, roleId })
     } catch (e) {
@@ -214,7 +232,10 @@ function UsersSection({ roles }: { roles: RoleRow[] }) {
               <Select
                 value={u.role_id}
                 disabled={isSelf || assign.isPending}
-                onChange={(e) => handleAssign(u.id, e.target.value)}
+                onChange={(e) => {
+                  const role = roles.find((r) => r.id === e.target.value)
+                  handleAssign(u.id, u.full_name, e.target.value, role?.name_ar ?? '')
+                }}
                 className="max-w-[12rem]"
               >
                 {roles.map((r) => (

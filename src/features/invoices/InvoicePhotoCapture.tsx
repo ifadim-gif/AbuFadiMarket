@@ -1,9 +1,11 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import Swal from 'sweetalert2'
 import { getInvoiceImageSignedUrl } from './queries'
 import { useDeleteInvoiceImage, useInvoiceImages, useUploadInvoiceImage } from './hooks'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { ImageLightbox } from '../../components/ui/ImageLightbox'
 
 export function InvoicePhotoCapture({
   invoiceId,
@@ -17,7 +19,8 @@ export function InvoicePhotoCapture({
   const { data: images } = useInvoiceImages(invoiceId)
   const upload = useUploadInvoiceImage()
   const remove = useDeleteInvoiceImage()
-  const fileInput = useRef<HTMLInputElement>(null)
+  const cameraInput = useRef<HTMLInputElement>(null)
+  const galleryInput = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
 
   async function handleFiles(e: ChangeEvent<HTMLInputElement>) {
@@ -35,6 +38,18 @@ export function InvoicePhotoCapture({
     }
   }
 
+  async function handleDelete(id: string, path: string) {
+    const confirm = await Swal.fire({
+      icon: 'warning',
+      title: 'حذف صورة الفاتورة؟',
+      showCancelButton: true,
+      confirmButtonText: 'حذف',
+      cancelButtonText: 'إلغاء',
+    })
+    if (!confirm.isConfirmed) return
+    remove.mutate({ id, invoiceId, path })
+  }
+
   if (!navigator.onLine) {
     return (
       <p className="text-xs text-gray-500">
@@ -47,19 +62,37 @@ export function InvoicePhotoCapture({
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-300">صور الفاتورة</span>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => fileInput.current?.click()}
-          disabled={upload.isPending}
-        >
-          {upload.isPending ? 'جارٍ الرفع...' : 'تصوير / إضافة صفحة'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => cameraInput.current?.click()}
+            disabled={upload.isPending}
+          >
+            📷 تصوير
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => galleryInput.current?.click()}
+            disabled={upload.isPending}
+          >
+            {upload.isPending ? 'جارٍ الرفع...' : '🖼️ من المعرض'}
+          </Button>
+        </div>
         <input
-          ref={fileInput}
+          ref={cameraInput}
           type="file"
           accept="image/*"
           capture="environment"
+          multiple
+          className="hidden"
+          onChange={handleFiles}
+        />
+        <input
+          ref={galleryInput}
+          type="file"
+          accept="image/*"
           multiple
           className="hidden"
           onChange={handleFiles}
@@ -72,11 +105,7 @@ export function InvoicePhotoCapture({
             <InvoiceImageThumb
               key={img.id}
               path={img.image_url}
-              onDelete={
-                canManage
-                  ? () => remove.mutate({ id: img.id, invoiceId, path: img.image_url })
-                  : undefined
-              }
+              onDelete={canManage ? () => handleDelete(img.id, img.image_url) : undefined}
             />
           ))}
         </div>
@@ -86,24 +115,34 @@ export function InvoicePhotoCapture({
 }
 
 function InvoiceImageThumb({ path, onDelete }: { path: string; onDelete?: () => void }) {
+  const [zoomed, setZoomed] = useState(false)
   const { data: url } = useQuery({
     queryKey: ['invoice-image-url', path],
     queryFn: () => getInvoiceImageSignedUrl(path),
   })
 
   return (
-    <div className="relative aspect-square overflow-hidden rounded-lg border border-glass-border bg-space-900">
-      {url && <img src={url} alt="صورة الفاتورة" className="h-full w-full object-cover" />}
-      {onDelete && (
-        <button
-          type="button"
-          onClick={onDelete}
-          className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white"
-          aria-label="حذف الصورة"
-        >
-          ✕
-        </button>
+    <>
+      <div className="relative aspect-square overflow-hidden rounded-lg border border-glass-border bg-space-900">
+        {url && (
+          <button type="button" onClick={() => setZoomed(true)} className="block h-full w-full">
+            <img src={url} alt="صورة الفاتورة" className="h-full w-full object-cover" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+            aria-label="حذف الصورة"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+      {zoomed && url && (
+        <ImageLightbox src={url} alt="صورة الفاتورة" onClose={() => setZoomed(false)} />
       )}
-    </div>
+    </>
   )
 }

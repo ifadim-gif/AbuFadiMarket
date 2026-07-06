@@ -5,6 +5,7 @@ import { Badge } from '../../components/ui/Badge'
 import { Input } from '../../components/ui/Input'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { arabicIncludes } from '../../lib/arabicSearch'
 import { useSuppliers } from './hooks'
 import { dayLabels, isSupplierDueOn } from './visitSchedule'
 
@@ -19,9 +20,9 @@ export function TodayMerchantsPage() {
   )
 
   const searched = useMemo(() => {
-    const q = search.trim().toLowerCase()
+    const q = search.trim()
     if (!q || !suppliers) return null
-    return suppliers.filter((s) => s.name.toLowerCase().includes(q))
+    return suppliers.filter((s) => arabicIncludes(s.name, q))
   }, [suppliers, search])
 
   return (

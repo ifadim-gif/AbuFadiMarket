@@ -75,7 +75,7 @@ export function NavLauncher() {
         aria-expanded={open}
         whileTap={{ scale: 0.9 }}
       >
-        <img src={logoMark} alt="أبو فادي" className="h-full w-full scale-110 object-cover" />
+        <img src={logoMark} alt="أبو فادي" className="h-full w-full object-cover" />
       </motion.button>
 
       <div

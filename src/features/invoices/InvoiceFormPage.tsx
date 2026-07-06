@@ -5,7 +5,8 @@ import { GlassCard } from '../../components/ui/GlassCard'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
-import { Input, Select } from '../../components/ui/Input'
+import { Input } from '../../components/ui/Input'
+import { SearchableSelect } from '../../components/ui/SearchableSelect'
 import { useAuth } from '../auth/useAuth'
 import { useHasCapability } from '../auth/useHasCapability'
 import { useSuppliers } from '../suppliers/hooks'
@@ -68,6 +69,15 @@ export function InvoiceFormPage() {
     }
     try {
       if (isEdit && id) {
+        const confirm = await Swal.fire({
+          icon: 'warning',
+          title: 'تأكيد تعديل الفاتورة',
+          text: 'سيُعدَّل رقمها/مبلغها/تاريخها. هل تريد المتابعة؟',
+          showCancelButton: true,
+          confirmButtonText: 'تعديل',
+          cancelButtonText: 'إلغاء',
+        })
+        if (!confirm.isConfirmed) return
         await updateInvoice.mutateAsync({
           id,
           input: { supplier_id: supplierId, paper_no: paperNo, amount: Number(amount), due_date: dueDate || null },
@@ -139,18 +149,12 @@ export function InvoiceFormPage() {
         {needsPicker && (
           <label className="flex flex-col gap-1 text-sm text-gray-300">
             المورد
-            <Select
-              required
+            <SearchableSelect
               value={pickedSupplierId}
-              onChange={(e) => setPickedSupplierId(e.target.value)}
-            >
-              <option value="">اختر موردًا…</option>
-              {suppliers?.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </Select>
+              onChange={setPickedSupplierId}
+              placeholder="ابحث عن مورد…"
+              options={(suppliers ?? []).map((s) => ({ value: s.id, label: s.name }))}
+            />
           </label>
         )}
         {!isEdit && (

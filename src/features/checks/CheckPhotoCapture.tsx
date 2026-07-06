@@ -1,9 +1,11 @@
 import { useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import Swal from 'sweetalert2'
 import { getCheckImageSignedUrl } from './queries'
 import { useCheckImages, useDeleteCheckImage, useUploadCheckImage } from './hooks'
 import { Button } from '../../components/ui/Button'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
+import { ImageLightbox } from '../../components/ui/ImageLightbox'
 
 interface Rect {
   x: number
@@ -46,6 +48,18 @@ export function CheckPhotoCapture({
     } catch {
       setError('تعذّر رفع صورة الشيك')
     }
+  }
+
+  async function handleDelete(id: string, path: string) {
+    const confirm = await Swal.fire({
+      icon: 'warning',
+      title: 'حذف صورة الشيك؟',
+      showCancelButton: true,
+      confirmButtonText: 'حذف',
+      cancelButtonText: 'إلغاء',
+    })
+    if (!confirm.isConfirmed) return
+    remove.mutate({ id, checkId, path })
   }
 
   if (!navigator.onLine) {
@@ -99,9 +113,7 @@ export function CheckPhotoCapture({
       {latest && (
         <CheckImageThumb
           path={latest.image_url}
-          onDelete={
-            canManage ? () => remove.mutate({ id: latest.id, checkId, path: latest.image_url }) : undefined
-          }
+          onDelete={canManage ? () => handleDelete(latest.id, latest.image_url) : undefined}
         />
       )}
     </div>
@@ -206,24 +218,32 @@ function CropDialog({
 }
 
 function CheckImageThumb({ path, onDelete }: { path: string; onDelete?: () => void }) {
+  const [zoomed, setZoomed] = useState(false)
   const { data: url } = useQuery({
     queryKey: ['check-image-url', path],
     queryFn: () => getCheckImageSignedUrl(path),
   })
 
   return (
-    <div className="relative w-40 overflow-hidden rounded-lg border border-glass-border bg-space-900">
-      {url && <img src={url} alt="صورة الشيك" className="w-full object-cover" />}
-      {onDelete && (
-        <button
-          type="button"
-          onClick={onDelete}
-          className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white"
-          aria-label="حذف الصورة"
-        >
-          ✕
-        </button>
-      )}
-    </div>
+    <>
+      <div className="relative w-40 overflow-hidden rounded-lg border border-glass-border bg-space-900">
+        {url && (
+          <button type="button" onClick={() => setZoomed(true)} className="block w-full">
+            <img src={url} alt="صورة الشيك" className="w-full object-cover" />
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="absolute left-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+            aria-label="حذف الصورة"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+      {zoomed && url && <ImageLightbox src={url} alt="صورة الشيك" onClose={() => setZoomed(false)} />}
+    </>
   )
 }

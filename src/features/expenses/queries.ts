@@ -6,6 +6,7 @@ export interface RecordExpenseInput {
   amount: number
   source: ExpenseSource
   note: string | null
+  categoryId: string | null
 }
 
 export async function recordExpense(input: RecordExpenseInput, actorId: string): Promise<string> {
@@ -14,6 +15,7 @@ export async function recordExpense(input: RecordExpenseInput, actorId: string):
     p_source: input.source,
     p_actor: actorId,
     p_note: input.note ?? undefined,
+    p_category_id: input.categoryId ?? undefined,
   })
   if (error) throw error
   return data

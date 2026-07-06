@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import clsx from 'clsx'
+import Swal from 'sweetalert2'
 import { Button } from '../../components/ui/Button'
 import { Select, Input } from '../../components/ui/Input'
 import { useUpdateSupplierVisitSchedule } from './hooks'
@@ -18,6 +19,14 @@ export function VisitScheduleEditor({ supplier }: { supplier: Supplier }) {
   }
 
   async function save() {
+    const confirm = await Swal.fire({
+      icon: 'question',
+      title: 'حفظ تعديل أيام الزيارة؟',
+      showCancelButton: true,
+      confirmButtonText: 'حفظ',
+      cancelButtonText: 'إلغاء',
+    })
+    if (!confirm.isConfirmed) return
     await update.mutateAsync({
       id: supplier.id,
       input: {

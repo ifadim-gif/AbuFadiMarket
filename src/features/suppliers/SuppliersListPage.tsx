@@ -7,6 +7,7 @@ import { Input } from '../../components/ui/Input'
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner'
 import { ErrorBanner } from '../../components/ui/ErrorBanner'
 import { useHasCapability } from '../auth/useHasCapability'
+import { arabicIncludes } from '../../lib/arabicSearch'
 import { useCreateSupplier, useSuppliers } from './hooks'
 import { SupplierExcelImport } from './SupplierExcelImport'
 
@@ -19,12 +20,12 @@ export function SuppliersListPage() {
 
   const filtered = useMemo(() => {
     if (!suppliers) return suppliers
-    const q = search.trim().toLowerCase()
+    const q = search.trim()
     if (!q) return suppliers
     return suppliers.filter(
       (s) =>
-        s.name.toLowerCase().includes(q) ||
-        s.phone?.toLowerCase().includes(q) ||
+        arabicIncludes(s.name, q) ||
+        arabicIncludes(s.phone, q) ||
         String(s.supplier_no).includes(q),
     )
   }, [suppliers, search])
